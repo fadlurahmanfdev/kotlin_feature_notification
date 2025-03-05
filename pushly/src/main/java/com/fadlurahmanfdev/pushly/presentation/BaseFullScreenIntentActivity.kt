@@ -1,4 +1,4 @@
-package com.github.fadlurahmanfdev.kotlin_core_notification.presentation
+package com.fadlurahmanfdev.pushly.presentation
 
 import android.app.KeyguardManager
 import android.content.Context
@@ -10,8 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 abstract class BaseFullScreenIntentActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)

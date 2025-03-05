@@ -1,7 +1,9 @@
-package com.github.fadlurahmanfdev.kotlin_core_notification.data.dto.model
+package com.fadlurahmanfdev.pushly.model
+
+import androidx.core.app.Person
 
 data class ItemConversationNotificationModel(
     val message: String,
     val timestamp: Long,
-    val person: ItemPerson,
+    val person: Person,
 )

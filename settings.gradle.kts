@@ -20,6 +20,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Core Notification"
+rootProject.name = "Pushly Notification"
 include(":app")
-include(":core_notification")
+include(":pushly")

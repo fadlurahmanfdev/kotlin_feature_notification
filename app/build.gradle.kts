@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.github.fadlurahmanfdev.core_notification_example"
+    namespace = "com.fadlurahmanfdev.example"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.github.fadlurahmanfdev.core_notification_example"
+        applicationId = "com.fadlurahmanfdev.example"
         minSdk = 21
         targetSdk = 34
         versionCode = 1
@@ -47,7 +47,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.glide)
+    implementation(project(":pushly"))
 
-    implementation(project(":core_notification"))
-//    implementation("com.github.fadlurahmanfdev:kotlin_core_notification:v0.0.4")
+    //    implementation("com.github.fadlurahmanfdev:kotlin_core_notification:v0.0.4")
 }

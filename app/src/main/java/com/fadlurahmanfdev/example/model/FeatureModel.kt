@@ -1,4 +1,4 @@
-package com.github.fadlurahmanfdev.core_notification_example.model
+package com.fadlurahmanfdev.example.model
 
 import androidx.annotation.DrawableRes
 

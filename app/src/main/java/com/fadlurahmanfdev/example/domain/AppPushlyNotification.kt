@@ -1,4 +1,6 @@
 package com.fadlurahmanfdev.example.domain
 
-class AppNotification {
-}
+import android.content.Context
+import com.fadlurahmanfdev.pushly.common.BasePushlyNotification
+
+class AppPushlyNotification(context: Context) : BasePushlyNotification(context) {}

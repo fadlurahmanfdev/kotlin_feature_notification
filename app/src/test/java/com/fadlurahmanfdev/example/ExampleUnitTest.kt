@@ -1,4 +1,4 @@
-package com.github.fadlurahmanfdev.core_notification_example
+package com.fadlurahmanfdev.example
 
 import org.junit.Test
 

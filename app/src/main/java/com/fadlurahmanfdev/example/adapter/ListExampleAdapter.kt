@@ -1,4 +1,4 @@
-package com.github.fadlurahmanfdev.core_notification_example.adapter
+package com.fadlurahmanfdev.example.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.github.fadlurahmanfdev.core_notification_example.R
-import com.github.fadlurahmanfdev.core_notification_example.model.FeatureModel
+import com.fadlurahmanfdev.example.R
+import com.fadlurahmanfdev.example.model.FeatureModel
 
 class ListExampleAdapter : RecyclerView.Adapter<ListExampleAdapter.ViewHolder>() {
     val items: ArrayList<FeatureModel> = arrayListOf()

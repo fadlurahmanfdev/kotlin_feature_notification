@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.github.fadlurahmanfdev.kotlin_core_notification"
+    namespace = "com.fadlurahmanfdev.pushly"
     compileSdk = 34
 
     defaultConfig {

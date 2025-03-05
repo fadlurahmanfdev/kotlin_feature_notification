@@ -1,12 +1,10 @@
 package com.fadlurahmanfdev.pushly.common
 
-import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
@@ -16,10 +14,10 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
-import com.fadlurahmanfdev.pushly.enums.FeatureNotificationImportance
+import androidx.core.app.Person
+import com.fadlurahmanfdev.pushly.model.ItemConversationNotificationModel
 
-abstract class BaseFeatureNotification(val context: Context) {
+abstract class BasePushlyNotification(val context: Context) {
     var notificationManager: NotificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -31,12 +29,11 @@ abstract class BaseFeatureNotification(val context: Context) {
     /**
      * Determine whether you have been granted a notification permission.
      * @author fadlurahmanfdev
-     * @return return true if permission is [PackageManager.PERMISSION_GRANTED] and return false if
-     * permission is [PackageManager.PERMISSION_DENIED].
-     * @see BaseFeatureNotification.createNotificationChannel
-     * @see BaseFeatureNotification.isSupportedNotificationChannel
+     * @return return true if permission is enabled
+     * @see BasePushlyNotification.createNotificationChannel
+     * @see BasePushlyNotification.isSupportedNotificationChannel
      */
-    open fun isNotificationPermissionEnabledAndGranted(): Boolean {
+    fun isNotificationEnabled(): Boolean {
         return when {
             Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU -> {
                 val isNotificationEnabled =
@@ -45,11 +42,7 @@ abstract class BaseFeatureNotification(val context: Context) {
             }
 
             else -> {
-                val status = ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission_group.NOTIFICATIONS
-                )
-                status == PackageManager.PERMISSION_GRANTED
+                true
             }
         }
     }
@@ -67,33 +60,60 @@ abstract class BaseFeatureNotification(val context: Context) {
      * @param channelId unique identifier for different channelId created for the apps
      * @param channelName channel name will be shown to user in notification
      * @param channelDescription channel description will be shown to user in notification
+     * @param sound Sets the sound that should be played for notifications posted to this channel and its audio attributes
+     * @param importance The importance of the channel. This controls how interruptive notifications posted to this channel are. (e.g., [NotificationManager.IMPORTANCE_LOW], [NotificationManager.IMPORTANCE_HIGH], [NotificationManager.IMPORTANCE_MAX])
      * */
     open fun createNotificationChannel(
         channelId: String,
         channelName: String,
         channelDescription: String,
         sound: Uri?,
-        importance: FeatureNotificationImportance = FeatureNotificationImportance.IMPORTANCE_DEFAULT,
+        importance: Int,
     ) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
-            Log.i(this::class.java.simpleName, "${Build.VERSION.SDK_INT} is not need to create notification channel")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                channelName,
+                importance,
+            ).apply {
+                description = channelDescription
+                setSound(sound, null)
+            }
+            createNotificationChannel(channel)
+        }
+    }
+
+    /**
+     * create notification channel
+     * if notification channel is successfully created, it will return true, otherwise it will return false
+     * @author fadlurahmanfdev
+     * @return true if notification channel is created or device didn't support notification channel, and return false if notification channel is not successfully created
+     * @param channel channel of the notification
+     * */
+    open fun createNotificationChannel(
+        channel: NotificationChannel,
+    ) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            Log.d(
+                this::class.java.simpleName,
+                "Pushly-LOG %%% - ${Build.VERSION.SDK_INT} is not need to create notification channel"
+            )
             return
         }
 
-        if (isNotificationChannelExist(channelId)) {
-            Log.i(this::class.java.simpleName, "Notification channel with channelId: $channelId already exist")
+        if (isNotificationChannelExist(channel.id)) {
+            Log.d(
+                this::class.java.simpleName,
+                "Pushly-LOG %%% - notification channel with channelId: ${channel.id} already exist"
+            )
             return
         }
 
-        val channel = NotificationChannel(
-            channelId,
-            channelName,
-            importance.value,
-        ).apply {
-            description = channelDescription
-            setSound(sound, null)
-        }
         notificationManager.createNotificationChannel(channel)
+        Log.i(
+            this::class.java.simpleName,
+            "Pushly-LOG %%% - successfully created notification channel ${channel.id} - ${channel.name}"
+        )
     }
 
     /**
@@ -113,7 +133,7 @@ abstract class BaseFeatureNotification(val context: Context) {
             return knownChannel != null
         } else {
             Log.i(
-                BaseFeatureNotification::class.java.simpleName,
+                BasePushlyNotification::class.java.simpleName,
                 "${Build.VERSION.SDK_INT} is not supported to get notification channel"
             )
             return true
@@ -134,7 +154,7 @@ abstract class BaseFeatureNotification(val context: Context) {
             return true
         } else {
             Log.i(
-                BaseFeatureNotification::class.java.simpleName,
+                BasePushlyNotification::class.java.simpleName,
                 "${Build.VERSION.SDK_INT} is not supported to delete notification channel"
             )
             return true
@@ -149,7 +169,7 @@ abstract class BaseFeatureNotification(val context: Context) {
         pendingIntent: PendingIntent?,
     ): NotificationCompat.Builder {
         return NotificationCompat.Builder(context, channelId)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
             .setSmallIcon(smallIcon)
             .setContentTitle(title)
@@ -159,33 +179,6 @@ abstract class BaseFeatureNotification(val context: Context) {
                     setContentIntent(pendingIntent)
                 }
             }
-    }
-
-    fun groupNotificationBuilder(
-        context: Context,
-        channelId: String,
-        groupKey: String,
-        bigContentTitle: String,
-        summaryText: String,
-        lines: List<String>,
-        @DrawableRes smallIcon: Int,
-    ): NotificationCompat.Builder {
-        val builder = NotificationCompat.Builder(context, channelId)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setAutoCancel(true)
-            .setSmallIcon(smallIcon)
-
-        val inboxStyle = NotificationCompat.InboxStyle()
-        if (lines.isNotEmpty()) {
-            for (element in lines) {
-                inboxStyle.addLine(element)
-            }
-            inboxStyle.setBigContentTitle(bigContentTitle)
-                .setSummaryText(summaryText)
-        }
-        return builder.setStyle(inboxStyle)
-            .setGroup(groupKey)
-            .setGroupSummary(true)
     }
 
     open fun getImageNotificationBuilder(
@@ -201,15 +194,75 @@ abstract class BaseFeatureNotification(val context: Context) {
             smallIcon = smallIcon,
             title = title,
             message = message,
-            pendingIntent = pendingIntent
+            pendingIntent = pendingIntent,
         ).apply {
             setLargeIcon(bitmapImage)
-            setStyle(NotificationCompat
-                .BigPictureStyle()
-                .bigPicture(bitmapImage)
-                .bigLargeIcon(bitmapImage)
+            setStyle(
+                NotificationCompat
+                    .BigPictureStyle()
+                    .bigPicture(bitmapImage)
+                    .bigLargeIcon(bitmapImage)
             )
         }
+    }
+
+    fun getInboxStyleNotificationBuilder(
+        channelId: String,
+        title: String,
+        text: String,
+        groupKey: String,
+        summaryText: String,
+        lines: List<String>,
+        @DrawableRes smallIcon: Int,
+    ): NotificationCompat.Builder {
+        val builder = NotificationCompat.Builder(context, channelId)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+            .setSmallIcon(smallIcon)
+
+        val inboxStyle = NotificationCompat.InboxStyle()
+        if (lines.isNotEmpty()) {
+            for (element in lines) {
+                inboxStyle.addLine(element)
+            }
+            inboxStyle.setSummaryText(summaryText)
+        }
+        return builder.setStyle(inboxStyle)
+            .setContentTitle(title)
+            .setContentText(text)
+            .setGroup(groupKey)
+            .setGroupSummary(true)
+    }
+
+    open fun getMessagingStyleNotificationBuilder(
+        notificationId: Int,
+        channelId: String,
+        @DrawableRes smallIcon: Int,
+        title: String,
+        user: Person,
+        conversations: List<ItemConversationNotificationModel>
+    ): NotificationCompat.Builder {
+        val notificationBuilder = getNotificationBuilder(
+            channelId = channelId,
+            smallIcon = smallIcon,
+            title = "TITLE",
+            message = "MESSAGE",
+            pendingIntent = null
+        )
+        val messagingStyle = NotificationCompat.MessagingStyle(user)
+            .setConversationTitle(title)
+        repeat(conversations.size) { index ->
+            val conversation = conversations[index]
+            messagingStyle.addMessage(
+                NotificationCompat.MessagingStyle.Message(
+                    conversation.message,
+                    conversation.timestamp,
+                    conversation.person,
+                )
+            )
+            notificationBuilder.setStyle(messagingStyle)
+        }
+        return notificationBuilder
     }
 
     fun showNotification(notificationId: Int, notification: Notification) {
