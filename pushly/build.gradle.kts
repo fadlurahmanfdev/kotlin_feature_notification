@@ -53,13 +53,13 @@ mavenPublishing {
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
     signAllPublications()
 
-    coordinates("com.fadlurahmanfdev", "kotlin_feature_crypto", "0.0.1-beta")
+    coordinates("com.fadlurahmanfdev", "pushly", "0.0.1")
 
     pom {
-        name.set("Kotlin's Library Feature Crypto")
-        description.set("user-friendly encryption library that makes securing your data easy. It supports AES for fast encryption, RSA for secure key exchange, and ED25519 for digital signatures. With CryptX, you can quickly add strong encryption and decryption features to your app, ensuring your data stays safe with minimal effort.")
-        inceptionYear.set("2024")
-        url.set("https://github.com/fadlurahmanfdev/kotlin_feature_crypto/")
+        name.set("Pushly Notification")
+        description.set("Library to simplify notification operation")
+        inceptionYear.set("2025")
+        url.set("https://github.com/fadlurahmanfdev/kotlin_feature_notification/")
         licenses {
             license {
                 name.set("The Apache License, Version 2.0")
@@ -75,9 +75,9 @@ mavenPublishing {
             }
         }
         scm {
-            url.set("https://github.com/fadlurahmanfdev/kotlin_feature_crypto/")
-            connection.set("scm:git:git://github.com/fadlurahmanfdev/kotlin_feature_crypto.git")
-            developerConnection.set("scm:git:ssh://git@github.com/fadlurahmanfdev/kotlin_feature_crypto.git")
+            url.set("https://github.com/fadlurahmanfdev/kotlin_feature_notification/")
+            connection.set("scm:git:git://github.com/fadlurahmanfdev/kotlin_feature_notification.git")
+            developerConnection.set("scm:git:ssh://git@github.com/fadlurahmanfdev/kotlin_feature_notification.git")
         }
     }
 }
