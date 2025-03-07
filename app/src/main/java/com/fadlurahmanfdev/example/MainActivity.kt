@@ -138,7 +138,7 @@ class MainActivity : AppCompatActivity(), ListExampleAdapter.Callback {
 
     override fun onClicked(item: FeatureModel) {
         when (item.enum) {
-            "ASK_PERMISSION" -> {
+            "IS_NOTIFICATION_ENABLED" -> {
                 val isEnabled = pushlyNotification.isNotificationEnabled()
                 Log.d(
                     this::class.java.simpleName,
@@ -150,9 +150,9 @@ class MainActivity : AppCompatActivity(), ListExampleAdapter.Callback {
                 val notificationRingtoneUri =
                     RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
                 pushlyNotification.createNotificationChannel(
-                    channelId = "GENERAL",
-                    channelName = "Umum",
-                    channelDescription = "Notifikasi Umum",
+                    channelId = "GENERAL-CHANNEL",
+                    channelName = "General",
+                    channelDescription = "General Notification",
                     sound = notificationRingtoneUri,
                     importance = NotificationManagerCompat.IMPORTANCE_DEFAULT
                 )
@@ -195,7 +195,6 @@ class MainActivity : AppCompatActivity(), ListExampleAdapter.Callback {
                         override fun onLoadCleared(placeholder: Drawable?) {
 
                         }
-
                     })
             }
 
