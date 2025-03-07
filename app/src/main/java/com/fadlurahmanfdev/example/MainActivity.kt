@@ -154,7 +154,7 @@ class MainActivity : AppCompatActivity(), ListExampleAdapter.Callback {
                     channelName = "Umum",
                     channelDescription = "Notifikasi Umum",
                     sound = notificationRingtoneUri,
-                    importance = NotificationManager.IMPORTANCE_DEFAULT
+                    importance = NotificationManagerCompat.IMPORTANCE_DEFAULT
                 )
             }
 
@@ -213,10 +213,11 @@ class MainActivity : AppCompatActivity(), ListExampleAdapter.Callback {
                 val inboxNotificatipn = pushlyNotification.getInboxStyleNotificationBuilder(
                     channelId = "INBOX-CHANNEL",
                     title = "New Email Incoming",
-                    text = "3 Mails from fadlurahmanfdev",
+                    message = "3 Mails from fadlurahmanfdev",
                     groupKey = "GROUP-KEY-1",
                     summaryText = "Incoming Mail",
                     lines = listOf("Hello", "How are u?", "I think ..."),
+                    pendingIntent = null,
                     smallIcon = R.drawable.il_media_islam
                 ).build()
                 pushlyNotification.showNotification(2, inboxNotificatipn)
@@ -250,12 +251,14 @@ class MainActivity : AppCompatActivity(), ListExampleAdapter.Callback {
                                     mapUser[person.id] = resource
                                     if (mapUser.keys.size == persons.size) {
                                         val notification = pushlyNotification.getMessagingStyleNotificationBuilder(
-                                            notificationId = 1,
                                             title = "Conversation Title",
                                             user = Person.Builder().setName("fadlurahmanfdev")
                                                 .build(),
                                             channelId = "INBOX-CHANNEL",
                                             smallIcon = R.drawable.il_media_islam,
+                                            message = "Conversation Message",
+                                            pendingIntent = null,
+                                            summaryText = "summart conversation",
                                             conversations = listOf(
                                                 ItemConversationNotificationModel(
                                                     message = "Hello Alice!",
