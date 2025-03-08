@@ -1,6 +1,7 @@
 package com.fadlurahmanfdev.example.service
 
 import android.content.Intent
+import android.widget.RemoteViews
 import androidx.core.app.Person
 import com.fadlurahmanfdev.example.R
 import com.fadlurahmanfdev.example.domain.AppPushlyNotification
@@ -24,6 +25,7 @@ class AppPushlyCallService : PushlyCallService() {
                 bundle = null,
                 clazz = AppPushlyCallReceiver::class.java
             ),
+            answerText = "Answer",
             channelId = "CALL-CHANNEL",
             declineIntent = PushlyCallNotification.getAnswerPendingIntent(
                 context = applicationContext,
@@ -31,11 +33,11 @@ class AppPushlyCallService : PushlyCallService() {
                 bundle = null,
                 clazz = AppPushlyCallReceiver::class.java
             ),
+            declineText = "Decline",
             isVideo = false,
-            message = "Message",
+            message = "Incoming Call",
             pendingIntent = null,
             smallIcon = R.drawable.il_media_islam,
-            title = "Title",
             user = Person.Builder().setName("Taufik Fadlurahman Fajari")
                 .setImportant(true)
                 .build()

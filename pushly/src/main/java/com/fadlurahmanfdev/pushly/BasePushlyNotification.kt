@@ -9,6 +9,8 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.util.Log
+import android.view.View
+import android.widget.RemoteViews
 import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
 import androidx.core.app.NotificationCompat
@@ -351,14 +353,17 @@ abstract class BasePushlyNotification(val context: Context) {
 
     open fun getCallStyleNotificationBuilder(
         answerIntent: PendingIntent,
+        answerText: String,
+        @DrawableRes answerIcon: Int = 0,
         channelId: String,
         declineIntent: PendingIntent,
-        isVideo:Boolean,
+        declineText: String,
+        @DrawableRes declineIcon: Int = 0,
+        isVideo: Boolean,
         message: String,
         pendingIntent: PendingIntent?,
         priority: Int = NotificationCompat.PRIORITY_MAX,
         @DrawableRes smallIcon: Int,
-        title: String,
         user: Person,
     ): NotificationCompat.Builder {
         val builder = getNotificationBuilder(
@@ -367,12 +372,44 @@ abstract class BasePushlyNotification(val context: Context) {
             pendingIntent = pendingIntent,
             priority = priority,
             smallIcon = smallIcon,
-            title = title,
+            title = "",
         )
 
-        val callStyle = NotificationCompat.CallStyle.forScreeningCall(user, answerIntent, declineIntent)
-            .setIsVideo(isVideo)
-        builder.setStyle(callStyle)
+        builder.setCategory(NotificationCompat.CATEGORY_CALL)
+            .setOngoing(true)
+
+        // temporary always false because there is no document how to handle answer text and decline text
+        // it will always english text as an icon if use a call style
+        val useCallStyle = false
+        if (useCallStyle) {
+            val callStyle =
+                NotificationCompat.CallStyle.forScreeningCall(user, answerIntent, declineIntent)
+                    .setIsVideo(isVideo)
+            builder.setStyle(callStyle)
+        } else {
+            val smallLayoutNotification =
+                RemoteViews(context.packageName, R.layout.call_notification_small)
+
+            if (user.uri != null) {
+                smallLayoutNotification.setViewVisibility(R.id.tv_avatar, View.GONE)
+                smallLayoutNotification.setViewVisibility(R.id.iv_avatar, View.VISIBLE)
+            } else {
+                smallLayoutNotification.setViewVisibility(R.id.iv_avatar, View.GONE)
+                smallLayoutNotification.setViewVisibility(R.id.tv_avatar, View.VISIBLE)
+                smallLayoutNotification.setTextViewText(
+                    R.id.tv_avatar,
+                    user.name!!.first().toString()
+                )
+            }
+            smallLayoutNotification.setTextViewText(R.id.tv_message, message)
+
+            builder
+                .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+                .setCustomContentView(smallLayoutNotification)
+                .addAction(declineIcon, declineText, declineIntent)
+                .addAction(answerIcon, answerText, answerIntent)
+                .setOngoing(true)
+        }
         return builder
     }
 
