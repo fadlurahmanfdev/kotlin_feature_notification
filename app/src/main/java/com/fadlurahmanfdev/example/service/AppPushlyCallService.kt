@@ -1,8 +1,8 @@
 package com.fadlurahmanfdev.example.service
 
 import android.content.Intent
-import android.widget.RemoteViews
 import androidx.core.app.Person
+import com.fadlurahmanfdev.example.FullScreenNotificationActivity
 import com.fadlurahmanfdev.example.R
 import com.fadlurahmanfdev.example.domain.AppPushlyNotification
 import com.fadlurahmanfdev.example.receiver.AppPushlyCallReceiver
@@ -18,6 +18,7 @@ class AppPushlyCallService : PushlyCallService() {
     }
 
     override fun onIncomingCall(intent: Intent) {
+        super.onIncomingCall(intent)
         val notification = pushlyNotification.getCallStyleNotificationBuilder(
             answerIntent = PushlyCallNotification.getAnswerPendingIntent(
                 context = applicationContext,
@@ -27,11 +28,17 @@ class AppPushlyCallService : PushlyCallService() {
             ),
             answerText = "Answer",
             channelId = "CALL-CHANNEL",
-            declineIntent = PushlyCallNotification.getAnswerPendingIntent(
+            declineIntent = PushlyCallNotification.getDeclinePendingIntent(
                 context = applicationContext,
-                requestCode = 0,
+                requestCode = 1,
                 bundle = null,
                 clazz = AppPushlyCallReceiver::class.java
+            ),
+            fullScreenIntent = PushlyCallNotification.getFullScreenPendingIntent(
+                context = applicationContext,
+                requestCode = 2,
+                bundle = null,
+                clazz = FullScreenNotificationActivity::class.java
             ),
             declineText = "Decline",
             isVideo = false,

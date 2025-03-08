@@ -7,4 +7,5 @@ object PushlyConstant {
 
     // Pushly Call Receiver
     const val ACTION_ANSWER_CALL = "com.fadlurahmanfdev.pushly.action.ANSWER_CALL"
+    const val ACTION_DECLINE_CALL = "com.fadlurahmanfdev.pushly.action.DECLINE_CALL"
 }

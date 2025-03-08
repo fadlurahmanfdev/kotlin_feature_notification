@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.graphics.Bitmap
+import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.util.Log
@@ -359,6 +360,7 @@ abstract class BasePushlyNotification(val context: Context) {
         declineIntent: PendingIntent,
         declineText: String,
         @DrawableRes declineIcon: Int = 0,
+        fullScreenIntent: PendingIntent? = null,
         isVideo: Boolean,
         message: String,
         pendingIntent: PendingIntent?,
@@ -380,6 +382,7 @@ abstract class BasePushlyNotification(val context: Context) {
 
         // temporary always false because there is no document how to handle answer text and decline text
         // it will always english text as an icon if use a call style
+        NotificationCompat.FLAG_INSISTENT
         val useCallStyle = false
         if (useCallStyle) {
             val callStyle =
@@ -408,7 +411,10 @@ abstract class BasePushlyNotification(val context: Context) {
                 .setCustomContentView(smallLayoutNotification)
                 .addAction(declineIcon, declineText, declineIntent)
                 .addAction(answerIcon, answerText, answerIntent)
-                .setOngoing(true)
+        }
+
+        if (fullScreenIntent != null) {
+            builder.setFullScreenIntent(fullScreenIntent, true)
         }
         return builder
     }

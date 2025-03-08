@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import com.fadlurahmanfdev.pushly.constant.PushlyConstant
+import com.fadlurahmanfdev.pushly.presentation.BaseFullScreenIntentActivity
 import com.fadlurahmanfdev.pushly.receiver.PushlyCallReceiver
 import com.fadlurahmanfdev.pushly.service.PushlyCallService
 
@@ -55,6 +56,35 @@ class PushlyCallNotification {
                 }
             }
             return PendingIntent.getBroadcast(context, requestCode, intent, flagPendingIntent())
+        }
+
+        fun <T : PushlyCallReceiver> getDeclinePendingIntent(
+            context: Context,
+            requestCode: Int,
+            bundle: Bundle?,
+            clazz: Class<T>
+        ): PendingIntent {
+            val intent = Intent(context, clazz).apply {
+                action = PushlyConstant.ACTION_DECLINE_CALL
+                if (bundle != null) {
+                    putExtras(bundle)
+                }
+            }
+            return PendingIntent.getBroadcast(context, requestCode, intent, flagPendingIntent())
+        }
+
+        fun <T : BaseFullScreenIntentActivity> getFullScreenPendingIntent(
+            context: Context,
+            requestCode: Int,
+            bundle: Bundle?,
+            clazz: Class<T>
+        ): PendingIntent {
+            val intent = Intent(context, clazz).apply {
+                if (bundle != null) {
+                    putExtras(bundle)
+                }
+            }
+            return PendingIntent.getActivity(context, requestCode, intent, flagPendingIntent())
         }
 
         private fun flagPendingIntent(): Int {

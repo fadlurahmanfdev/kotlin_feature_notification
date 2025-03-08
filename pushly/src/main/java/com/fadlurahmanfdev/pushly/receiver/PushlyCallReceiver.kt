@@ -16,8 +16,14 @@ abstract class PushlyCallReceiver : BroadcastReceiver() {
             PushlyConstant.ACTION_ANSWER_CALL -> {
                 onAnswerCall(context, intent)
             }
+
+            PushlyConstant.ACTION_DECLINE_CALL -> {
+                onDeclineCall(context, intent)
+            }
         }
     }
 
     abstract fun onAnswerCall(context: Context, intent: Intent)
+
+    abstract fun onDeclineCall(context: Context, intent: Intent)
 }

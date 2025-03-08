@@ -323,7 +323,7 @@ class MainActivity : AppCompatActivity(), ListExampleAdapter.Callback {
                     channelId = "ALARM-CHANNEL",
                     channelName = "Inbox",
                     channelDescription = "Notifikasi Inbox",
-                    sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM),
+                    sound = null,
                     importance = NotificationManagerCompat.IMPORTANCE_MAX
                 )
             }
@@ -357,7 +357,7 @@ class MainActivity : AppCompatActivity(), ListExampleAdapter.Callback {
                     channelId = "CALL-CHANNEL",
                     channelName = "Call",
                     channelDescription = "Call Notification",
-                    sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE),
+                    sound = null,
                     importance = NotificationManagerCompat.IMPORTANCE_MAX
                 )
             }
