@@ -1,6 +1,5 @@
 package com.fadlurahmanfdev.example
 
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.Bitmap
@@ -16,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.Person
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -27,6 +27,8 @@ import com.fadlurahmanfdev.example.adapter.ListExampleAdapter
 import com.fadlurahmanfdev.example.domain.AppPushlyNotification
 import com.fadlurahmanfdev.example.model.FeatureModel
 import com.fadlurahmanfdev.example.model.ItemPerson
+import com.fadlurahmanfdev.example.service.AppPushlyCallService
+import com.fadlurahmanfdev.pushly.PushlyCallNotification
 import com.fadlurahmanfdev.pushly.model.ItemConversationNotificationModel
 
 class MainActivity : AppCompatActivity(), ListExampleAdapter.Callback {
@@ -99,11 +101,30 @@ class MainActivity : AppCompatActivity(), ListExampleAdapter.Callback {
             title = "Inbox Channel",
             desc = "Create Inbox Channel Notification",
             enum = "CREATE_ALARM_CHANNEL_NOTIFICATION"
-        ),FeatureModel(
+        ),
+        FeatureModel(
             featureIcon = R.drawable.baseline_developer_mode_24,
             title = "Show Full Screen Notification",
             desc = "Show Full Screen notification",
             enum = "SHOW_FULL_SCREEN_NOTIFICATION"
+        ),
+        FeatureModel(
+            featureIcon = R.drawable.baseline_developer_mode_24,
+            title = "--DIVIDER CALL NOTIFICATION---",
+            desc = "------------------------------------------------------------",
+            enum = "--DIVIDER CALL NOTIFICATION---"
+        ),
+        FeatureModel(
+            featureIcon = R.drawable.baseline_developer_mode_24,
+            title = "Call Channel",
+            desc = "Create Call Channel Notification",
+            enum = "CREATE_CALL_CHANNEL_NOTIFICATION"
+        ),
+        FeatureModel(
+            featureIcon = R.drawable.baseline_developer_mode_24,
+            title = "Show Call Notification",
+            desc = "Show Notification with call style",
+            enum = "SHOW_CALL_NOTIFICATION"
         ),
     )
 
@@ -127,7 +148,8 @@ class MainActivity : AppCompatActivity(), ListExampleAdapter.Callback {
         adapter = ListExampleAdapter()
         adapter.setCallback(this)
         adapter.setList(features)
-        adapter.setHasStableIds(true)
+
+
         rv.adapter = adapter
     }
 
@@ -328,6 +350,20 @@ class MainActivity : AppCompatActivity(), ListExampleAdapter.Callback {
                     notificationId = 1,
                     notification = notification
                 )
+            }
+
+            "CREATE_CALL_CHANNEL_NOTIFICATION" -> {
+                pushlyNotification.createNotificationChannel(
+                    channelId = "CALL-CHANNEL",
+                    channelName = "Call",
+                    channelDescription = "Call Notification",
+                    sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE),
+                    importance = NotificationManagerCompat.IMPORTANCE_MAX
+                )
+            }
+
+            "SHOW_CALL_NOTIFICATION" -> {
+                PushlyCallNotification.showIncomingCall(this, null, AppPushlyCallService::class.java)
             }
 
             "" -> {

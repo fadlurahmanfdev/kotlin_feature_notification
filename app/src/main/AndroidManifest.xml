@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_PHONE_CALL" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -28,6 +31,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".service.AppPushlyCallService"
+            android:exported="false"
+            android:foregroundServiceType="phoneCall">
+            <intent-filter>
+                <action android:name="com.fadlurahmanfdev.pushly.action.INCOMING_CALL" />
+                <action android:name="com.fadlurahmanfdev.pushly.action.STOP_NCOMING_CALL" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name=".receiver.AppPushlyCallReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.fadlurahmanfdev.pushly.action.ANSWER_CALL" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

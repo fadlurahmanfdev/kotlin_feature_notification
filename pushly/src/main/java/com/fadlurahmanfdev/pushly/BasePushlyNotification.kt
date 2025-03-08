@@ -1,4 +1,4 @@
-package com.fadlurahmanfdev.pushly.common
+package com.fadlurahmanfdev.pushly
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -290,8 +290,8 @@ abstract class BasePushlyNotification(val context: Context) {
             for (element in lines) {
                 inboxStyle.addLine(element)
             }
-            inboxStyle.setSummaryText(summaryText)
         }
+        inboxStyle.setSummaryText(summaryText)
         return builder.setStyle(inboxStyle)
             .setGroup(groupKey)
             .setGroupSummary(true)
@@ -344,8 +344,35 @@ abstract class BasePushlyNotification(val context: Context) {
                     conversation.person,
                 )
             )
-            builder.setStyle(messagingStyle)
         }
+        builder.setStyle(messagingStyle)
+        return builder
+    }
+
+    open fun getCallStyleNotificationBuilder(
+        answerIntent: PendingIntent,
+        channelId: String,
+        declineIntent: PendingIntent,
+        isVideo:Boolean,
+        message: String,
+        pendingIntent: PendingIntent?,
+        priority: Int = NotificationCompat.PRIORITY_MAX,
+        @DrawableRes smallIcon: Int,
+        title: String,
+        user: Person,
+    ): NotificationCompat.Builder {
+        val builder = getNotificationBuilder(
+            channelId = channelId,
+            message = message,
+            pendingIntent = pendingIntent,
+            priority = priority,
+            smallIcon = smallIcon,
+            title = title,
+        )
+
+        val callStyle = NotificationCompat.CallStyle.forScreeningCall(user, answerIntent, declineIntent)
+            .setIsVideo(isVideo)
+        builder.setStyle(callStyle)
         return builder
     }
 
