@@ -8,6 +8,7 @@ Simplify notification operation, simple style, image style, inbox style, messagi
 - Image Style Notification
 - Inbox Style Notification
 - Messaging Style Notification
+- Call Style Notification
 
 # How To Use
 
@@ -43,6 +44,8 @@ pushlyNotification.createNotificationChannel(
     importance = NotificationManagerCompat.IMPORTANCE_DEFAULT
 )
 ```
+
+## Show Notification
 
 ### Show Simple Notification
 
@@ -143,4 +146,43 @@ Glide.with(this)
 
         override fun onLoadCleared(placeholder: Drawable?) {} 
     })
+```
+
+## Call Notification
+
+To show call style notification, it needs a `Service` and `BroadcastReceiver` to handling audio & clickable action.
+
+### Service
+
+Service act as an initiator to trigger call notification in device.
+
+In `onIncomingCall`, the app should create their own notification and start foreground using that notification.
+
+```kotlin
+class AppPushlyCallService : PushlyCallService() {
+    override fun onIncomingCall(intent: Intent) {
+        super.onIncomingCall(intent)
+        // handle incoming call
+    }
+}
+```
+
+### Broadcast Receiver
+
+Broadcast receiver is triggered when some action in call notification being clicked.
+
+In `onAnswerCall` & `onDeclineCall` method, do not forget to stop media player.
+
+In `onAnswerCall` method, you can handle to specific activity after user accept the call.
+
+```kotlin
+class AppPushlyCallReceiver : PushlyCallReceiver() {
+    override fun onAnswerCall(context: Context, intent: Intent) {
+        // handle answer call
+    }
+
+    override fun onDeclineCall(context: Context, intent: Intent) {
+        // handle decline call
+    }
+}
 ```

@@ -1,4 +1,4 @@
-package com.fadlurahmanfdev.pushly.common
+package com.fadlurahmanfdev.pushly
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -6,9 +6,12 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.graphics.Bitmap
+import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.util.Log
+import android.view.View
+import android.widget.RemoteViews
 import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
 import androidx.core.app.NotificationCompat
@@ -290,8 +293,8 @@ abstract class BasePushlyNotification(val context: Context) {
             for (element in lines) {
                 inboxStyle.addLine(element)
             }
-            inboxStyle.setSummaryText(summaryText)
         }
+        inboxStyle.setSummaryText(summaryText)
         return builder.setStyle(inboxStyle)
             .setGroup(groupKey)
             .setGroupSummary(true)
@@ -344,7 +347,94 @@ abstract class BasePushlyNotification(val context: Context) {
                     conversation.person,
                 )
             )
-            builder.setStyle(messagingStyle)
+        }
+        builder.setStyle(messagingStyle)
+        return builder
+    }
+
+    /**
+     * Get based call notification before show using [showNotification].
+     *
+     * Channel id must be created first, it the channel id not exists yet, the notification will not show/pop up
+     *
+     * @param answerIntent pending intent if the user accept call notification.
+     * @param answerText button text for answer call.
+     * @param answerIcon button icon for answer call.
+     * @param channelId unique identifier of the channel id.
+     * @param declineIntent pending intent if the user decline call notification.
+     * @param declineText button text for decline call.
+     * @param declineIcon button icon for decline call.
+     * @param fullScreenIntent pending intent to handle full screen notification.
+     * @param isVideo whether this call notification is video or is audio. Temporary not used.
+     * @param message the message will shown to user.
+     * @param priority the level priority of this notification.
+     * @param smallIcon the notification icon.
+     * @param user the user of this device
+     *
+     * @author fadlurahmanfdev - Taufik Fadlurahman Fajari
+     * */
+    open fun getCallStyleNotificationBuilder(
+        answerIntent: PendingIntent,
+        answerText: String,
+        @DrawableRes answerIcon: Int = 0,
+        channelId: String,
+        declineIntent: PendingIntent,
+        declineText: String,
+        @DrawableRes declineIcon: Int = 0,
+        fullScreenIntent: PendingIntent? = null,
+        isVideo: Boolean,
+        message: String,
+        priority: Int = NotificationCompat.PRIORITY_MAX,
+        @DrawableRes smallIcon: Int,
+        user: Person,
+    ): NotificationCompat.Builder {
+        val builder = getNotificationBuilder(
+            channelId = channelId,
+            message = message,
+            pendingIntent = null,
+            priority = priority,
+            smallIcon = smallIcon,
+            title = "",
+        )
+
+        builder.setCategory(NotificationCompat.CATEGORY_CALL)
+            .setOngoing(true)
+
+        // temporary always false because there is no document how to handle answer text and decline text
+        // it will always english text as an icon if use a call style
+        NotificationCompat.FLAG_INSISTENT
+        val useCallStyle = false
+        if (useCallStyle) {
+            val callStyle =
+                NotificationCompat.CallStyle.forScreeningCall(user, answerIntent, declineIntent)
+                    .setIsVideo(isVideo)
+            builder.setStyle(callStyle)
+        } else {
+            val smallLayoutNotification =
+                RemoteViews(context.packageName, R.layout.call_notification_small)
+
+            if (user.uri != null) {
+                smallLayoutNotification.setViewVisibility(R.id.tv_avatar, View.GONE)
+                smallLayoutNotification.setViewVisibility(R.id.iv_avatar, View.VISIBLE)
+            } else {
+                smallLayoutNotification.setViewVisibility(R.id.iv_avatar, View.GONE)
+                smallLayoutNotification.setViewVisibility(R.id.tv_avatar, View.VISIBLE)
+                smallLayoutNotification.setTextViewText(
+                    R.id.tv_avatar,
+                    user.name!!.first().toString()
+                )
+            }
+            smallLayoutNotification.setTextViewText(R.id.tv_message, message)
+
+            builder
+                .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+                .setCustomContentView(smallLayoutNotification)
+                .addAction(declineIcon, declineText, declineIntent)
+                .addAction(answerIcon, answerText, answerIntent)
+        }
+
+        if (fullScreenIntent != null) {
+            builder.setFullScreenIntent(fullScreenIntent, true)
         }
         return builder
     }

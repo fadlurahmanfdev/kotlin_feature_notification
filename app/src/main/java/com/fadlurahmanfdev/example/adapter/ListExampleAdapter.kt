@@ -48,6 +48,7 @@ class ListExampleAdapter : RecyclerView.Adapter<ListExampleAdapter.ViewHolder>()
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
+        println("MASUK $position - ${item}")
 
         holder.title.text = item.title
         holder.desc.text = item.desc ?: "-"

@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_PHONE_CALL" />
+    <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+
+    <application>
+        <service
+            android:name=".service.PushlyCallService"
+            android:exported="false"
+            android:foregroundServiceType="phoneCall">
+            <intent-filter>
+                <action android:name="com.fadlurahmanfdev.pushly.action.INCOMING_CALL" />
+                <action android:name="com.fadlurahmanfdev.pushly.action.STOP_NCOMING_CALL" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name=".receiver.PushlyCallReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.fadlurahmanfdev.pushly.action.ANSWER_CALL" />
+                <action android:name="com.fadlurahmanfdev.pushly.action.DECLINE_CALL" />
+            </intent-filter>
+        </receiver>
+    </application>
 </manifest>

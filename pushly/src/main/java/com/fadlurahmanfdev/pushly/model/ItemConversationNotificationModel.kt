@@ -1,7 +1,7 @@
 package com.fadlurahmanfdev.pushly.model
 
 import androidx.core.app.Person
-import com.fadlurahmanfdev.pushly.common.BasePushlyNotification
+import com.fadlurahmanfdev.pushly.BasePushlyNotification
 
 /**
  * The class for wrap item of conversation.
