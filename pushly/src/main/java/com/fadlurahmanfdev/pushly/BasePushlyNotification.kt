@@ -352,6 +352,27 @@ abstract class BasePushlyNotification(val context: Context) {
         return builder
     }
 
+    /**
+     * Get based call notification before show using [showNotification].
+     *
+     * Channel id must be created first, it the channel id not exists yet, the notification will not show/pop up
+     *
+     * @param answerIntent pending intent if the user accept call notification.
+     * @param answerText button text for answer call.
+     * @param answerIcon button icon for answer call.
+     * @param channelId unique identifier of the channel id.
+     * @param declineIntent pending intent if the user decline call notification.
+     * @param declineText button text for decline call.
+     * @param declineIcon button icon for decline call.
+     * @param fullScreenIntent pending intent to handle full screen notification.
+     * @param isVideo whether this call notification is video or is audio. Temporary not used.
+     * @param message the message will shown to user.
+     * @param priority the level priority of this notification.
+     * @param smallIcon the notification icon.
+     * @param user the user of this device
+     *
+     * @author fadlurahmanfdev - Taufik Fadlurahman Fajari
+     * */
     open fun getCallStyleNotificationBuilder(
         answerIntent: PendingIntent,
         answerText: String,
@@ -363,7 +384,6 @@ abstract class BasePushlyNotification(val context: Context) {
         fullScreenIntent: PendingIntent? = null,
         isVideo: Boolean,
         message: String,
-        pendingIntent: PendingIntent?,
         priority: Int = NotificationCompat.PRIORITY_MAX,
         @DrawableRes smallIcon: Int,
         user: Person,
@@ -371,7 +391,7 @@ abstract class BasePushlyNotification(val context: Context) {
         val builder = getNotificationBuilder(
             channelId = channelId,
             message = message,
-            pendingIntent = pendingIntent,
+            pendingIntent = null,
             priority = priority,
             smallIcon = smallIcon,
             title = "",

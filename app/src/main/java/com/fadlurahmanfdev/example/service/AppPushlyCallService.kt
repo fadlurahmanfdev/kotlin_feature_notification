@@ -43,7 +43,6 @@ class AppPushlyCallService : PushlyCallService() {
             declineText = "Decline",
             isVideo = false,
             message = "Incoming Call",
-            pendingIntent = null,
             smallIcon = R.drawable.il_media_islam,
             user = Person.Builder().setName("Taufik Fadlurahman Fajari")
                 .setImportant(true)
