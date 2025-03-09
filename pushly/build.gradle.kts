@@ -53,7 +53,7 @@ mavenPublishing {
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
     signAllPublications()
 
-    coordinates("com.fadlurahmanfdev", "pushly", "0.0.1")
+    coordinates("com.fadlurahmanfdev", "pushly", "0.0.2")
 
     pom {
         name.set("Pushly Notification")
